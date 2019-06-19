@@ -1,0 +1,12 @@
+{
+    "name": "Stone Banking Remote",
+    "dockerComposeFile": [
+        "../devops/dev/docker-compose.yml"
+    ],
+    "extensions": [
+        "jakebecker.elixir-ls"
+    ],
+    "service": "banking_app",
+    "workspaceFolder": "/opt/app",
+    "shutdownAction": "stopCompose"
+}
