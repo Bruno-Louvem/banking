@@ -12,7 +12,7 @@ defmodule BankingWeb.AccountController do
   end
 
   def create(conn, account_params) do
-    with {:ok, %Account{} = account} <- Bank.create_account(account_params) do
+    with {:ok, %Account{} = account} <- account_params |> Bank.create_account() do
       conn
       |> put_status(:created)
       |> render("show.json", account: account)

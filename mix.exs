@@ -43,7 +43,8 @@ defmodule Banking.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:excoveralls, "~> 0.9.1"},
-      {:faker, "~> 0.12", only: [:test, :dev]}
+      {:faker, "~> 0.12", only: [:test, :dev]},
+      {:money, "~> 1.4"}
     ]
   end
 

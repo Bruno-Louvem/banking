@@ -5,7 +5,7 @@ defmodule Banking.Bank.Account do
   @primary_key {:id, :binary_id, autogenerate: true}
 
   schema "accounts" do
-
+    has_one :balance, Banking.Bank.Balance
     field :name, :string
     field :email, :string
 

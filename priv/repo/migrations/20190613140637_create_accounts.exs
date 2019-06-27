@@ -1,4 +1,4 @@
-defmodule Banking.Repo.Migrations.CreateParts do
+defmodule Banking.Repo.Migrations.CreateAccounts do
   use Ecto.Migration
 
   def change do
@@ -9,6 +9,7 @@ defmodule Banking.Repo.Migrations.CreateParts do
 
       timestamps()
     end
+
     create unique_index(:accounts, [:email])
   end
 end

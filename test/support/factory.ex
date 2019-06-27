@@ -1,10 +1,19 @@
 defmodule Banking.Factory do
   import Banking.Utils, only: [recursive_struct_to_map: 1]
 
+  alias Banking.Repo
+
   defp entity(_context, :account) do
     %Banking.Bank.Account{
       email: Faker.Internet.email(),
       name: Faker.Name.name()
+    }
+  end
+
+  defp entity(context, :transaction) do
+    %Banking.Bank.Transaction{
+      account: get_assoc(context, :account),
+      amount: 10..100 |> Enum.random() |> Money.new()
     }
   end
 
