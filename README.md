@@ -8,6 +8,8 @@ Dependencies
  * docker-compose
  * Python 2/3
 
+## Setup
+
 ### Generate docker files and required enviroment variables for both dev and production environments
 ```bash
 $ cd devops
@@ -280,3 +282,49 @@ Response (example)
   }
 }
 ```
+
+## Deploy
+The application was deployed on Heroku
+
+`https://louvem-bank.herokuapp.com/api/v1/`
+
+Fork the project
+
+Outside docker container install heroku toolbelt, for instructions [click here](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+
+Signin on Heroku CLI
+
+`heroku login`
+
+Create your app on heroku
+
+`heroku create [app-name] --buildpack hashnuke/elixir`
+
+
+Link your repo on heroku
+
+`heroku git:remote -a [app-name].`
+
+Add elixir buildpack on your app
+
+`heroku buildpacks:add https://github.com/gjaldon/heroku-buildpack-phoenix-static.git --app louvem-bank`
+
+Add postgres addon
+
+`heroku addons:create heroku-postgresql:hobby-dev --app louvem-bank`
+
+Add environment variables on your app
+
+`heroku config:set POOL_SIZE=18 --app louvem-bank`
+
+`heroku config:set SECRET_KEY_BASE="secret_key" --app louvem-bank`
+
+`heroku config:set JWT_SECRET_KEY="secret_key" --app louvem-bank`
+
+Push to deploy
+
+`git push heroku master`
+
+Run migrations
+
+`heroku run "POOL_SIZE=2 mix ecto.migrate"`

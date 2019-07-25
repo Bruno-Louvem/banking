@@ -80,6 +80,15 @@ defmodule Banking.Bank do
     end
   end
 
+  @doc """
+  Create a transaction deposit to account.
+
+  ## Examples
+
+      iex> account |> deposit(Money.new(1000))
+      {:ok, %Account{}, %Transaction{}}
+
+  """
   @spec deposit(Banking.Bank.Account.t(), any) :: nil
   def deposit(%Account{id: account_id} = account, %Money{} = amount) do
     transaction_attrs = %{account_id: account_id, amount: amount}
@@ -103,6 +112,16 @@ defmodule Banking.Bank do
 
   def deposit(_, _), do: {:error, "Invalid account to be accredited"}
 
+
+  @doc """
+  Create a standaolone transaction.
+
+  ## Examples
+
+      iex> %{account_id: "uuid", amount: 1000} |> create_transaction()
+      {:ok, %Transaction{}}
+
+  """
   @spec create_transaction(
           :invalid
           | %{optional(:__struct__) => none, optional(atom | binary) => any}
@@ -113,6 +132,16 @@ defmodule Banking.Bank do
     |> Repo.insert()
   end
 
+
+  @doc """
+  Return balance entity by account id.
+
+  ## Examples
+
+      iex> account_id |> get_balance()
+      {:ok, %Balance{}}
+
+  """
   @spec get_balance(any) :: any
   def get_balance(account_id) do
     Balance
@@ -145,6 +174,15 @@ defmodule Banking.Bank do
     end
   end
 
+  @doc """
+  Create a transaction withdrawal to account.
+
+  ## Examples
+
+      iex> account |> withdrawal(Money.new(1000))
+      {:ok, %Account{}, %Transaction{}}
+
+  """
   @spec withdrawal(Banking.Bank.Account.t(), any) :: nil
   def withdrawal(%Account{id: account_id} = account, %Money{} = amount) do
     amount =
@@ -173,12 +211,30 @@ defmodule Banking.Bank do
 
   def withdrawal(_, _), do: {:error, "Invalid Account"}
 
+  @doc """
+  Send message to console about the transaction
+
+    ## Examples
+
+      iex> %Account{} |> send_withdrawal_mail(%Transaction{})
+      "Withdrawal has been success"
+      "from: noreply, to: email"
+      "Withdrawal of amount"
+  """
   def send_withdrawal_mail(%Account{} = account, %Transaction{} = transaction) do
     IO.puts("Withdrawal has been success")
     IO.puts("from: noreply, to: #{account.user.email}")
     IO.puts("Withdrawal of #{transaction.amount}")
   end
 
+  @doc """
+  Transfer money between two accounts
+
+    ## Examples
+
+      iex> %Account{} |> transfer(%Account{}, Integer.t() | Money.t())
+      %{transaction_a: Map.t(), transaction_b: Map.t()}
+  """
   @spec transfer(Banking.Bank.Account.t(), Banking.Bank.Account.t(), integer | Money.t()) :: any
   def transfer(%Account{id: account_a_id}, %Account{id: account_b_id}, %Money{} = amount) do
     amount_a =
@@ -229,6 +285,14 @@ defmodule Banking.Bank do
 
   def transfer(_, _, _), do: {:error, "Invalid accounts"}
 
+  @doc """
+  Transfer money between two accounts
+
+    ## Examples
+
+      iex> report()
+      %{month: List.t(), today: List.t(), year: List.t()}
+  """
   def report do
     %{
       today: Query.get_all_transactions_today() |> Repo.all() |> process_transaction(),
