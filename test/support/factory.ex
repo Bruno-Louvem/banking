@@ -1,17 +1,49 @@
 defmodule Banking.Factory do
+  @moduledoc """
+    Module responsible to provide helper funcions for entity creations on tests
+  """
   import Banking.Utils, only: [recursive_struct_to_map: 1]
 
+  alias Banking.Auth
+  alias Banking.Bank
   alias Banking.Repo
 
-  defp entity(_context, :account) do
-    %Banking.Bank.Account{
+  def jwt_account_token do
+    user = insert(:user)
+    account = insert(:account, context: %{user: user})
+    insert(:balance, context: %{account: account, amount: 2000})
+    {:ok, jwt_account_token, _} = Auth.Guardian.encode_and_sign(user)
+    jwt_account_token
+  end
+
+  def jwt_account_token(%{user: %Banking.Auth.User{} = user}) do
+    {:ok, jwt_account_token, _} = Auth.Guardian.encode_and_sign(user)
+    jwt_account_token
+  end
+
+  defp entity(_context, :user) do
+    %Auth.User{
       email: Faker.Internet.email(),
-      name: Faker.Name.name()
+      password_hash: Faker.String.base64()
+    }
+  end
+
+  defp entity(context, :account) do
+    %Bank.Account{
+      name: Faker.Name.name(),
+      user: get_assoc(context, :user)
     }
   end
 
   defp entity(context, :transaction) do
-    %Banking.Bank.Transaction{
+    %Bank.Transaction{
+      account: get_assoc(context, :account),
+      amount: 10..100 |> Enum.random() |> Money.new()
+    }
+  end
+
+  defp entity(context, :balance) do
+    %Bank.Balance{
       account: get_assoc(context, :account),
       amount: 10..100 |> Enum.random() |> Money.new()
     }
@@ -32,9 +64,10 @@ defmodule Banking.Factory do
   Returns a struct.
   """
 
-  def build(factory),                                      do: build(factory, %{}, [])
-  def build(factory, context: %{} = context),              do: build(factory, context, [])
-  def build(factory, attributes),                          do: build(factory, %{}, attributes)
+  def build(factory), do: build(factory, %{}, [])
+  def build(factory, context: %{} = context), do: build(factory, context, [])
+  def build(factory, attributes), do: build(factory, %{}, attributes)
+
   def build(factory, context, attributes) when is_atom(factory) and is_map(context) do
     context |> entity(factory) |> filter_overridden(attributes) |> struct(attributes)
   end
@@ -46,11 +79,12 @@ defmodule Banking.Factory do
 
   Returns a struct.
   """
-  def insert(factory),                                      do: insert(factory, %{}, [])
-  def insert(factory, context: %{} = context),              do: insert(factory, context, [])
-  def insert(factory, attributes),                          do: insert(factory, %{}, attributes)
+  def insert(factory), do: insert(factory, %{}, [])
+  def insert(factory, context: %{} = context), do: insert(factory, context, [])
+  def insert(factory, attributes), do: insert(factory, %{}, attributes)
+
   def insert(factory, context, attributes) when is_atom(factory) and is_map(context) do
-    Repo.insert! build(factory, context, attributes)
+    Repo.insert!(build(factory, context, attributes))
   end
 
   @doc """
@@ -61,15 +95,17 @@ defmodule Banking.Factory do
 
   Returns a map.
   """
-  def attrs(factory),                                      do: attrs(factory, %{}, [])
-  def attrs(factory, context: %{} = context),              do: attrs(factory, context, [])
+  def attrs(factory), do: attrs(factory, %{}, [])
+  @spec attrs(:account | :transaction, maybe_improper_list) :: map
+  def attrs(factory, context: %{} = context), do: attrs(factory, context, [])
   def attrs(factory, attributes) when is_list(attributes), do: attrs(factory, %{}, attributes)
+  @spec attrs(:account | :transaction, map, any) :: map
   def attrs(factory, context, attributes) when is_atom(factory) and is_map(context) do
     factory |> build(context) |> recursive_struct_to_map() |> Map.merge(Map.new(attributes))
   end
 
   @doc """
-  Builds an empty context map.
+  Builds an empty context map
 
   Returns a map.
   """
@@ -110,19 +146,21 @@ defmodule Banking.Factory do
   # e.g.: Drop a generated 'patient' if an explicit 'patient_id' was passed
   #
   defp filter_overridden(entity, attributes) do
-    to_drop = Enum.reduce(attributes, [], fn {identifier, _value}, acc ->
-      string_identifier = "#{identifier}"
-      with true <- String.ends_with?(string_identifier, "_id"),
-           raw <- string_identifier
+    to_drop =
+      Enum.reduce(attributes, [], fn {identifier, _value}, acc ->
+        string_identifier = "#{identifier}"
+
+        with true <- String.ends_with?(string_identifier, "_id"),
+             raw <-
+               string_identifier
                |> String.replace_suffix("_id", "")
                |> String.to_atom(),
-           true <- Map.has_key?(entity, raw)
-      do
-        [raw | acc]
-      else
-        _ -> acc
-      end
-    end)
+             true <- Map.has_key?(entity, raw) do
+          [raw | acc]
+        else
+          _ -> acc
+        end
+      end)
 
     Map.drop(entity, to_drop)
   end

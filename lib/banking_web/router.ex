@@ -5,10 +5,28 @@ defmodule BankingWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :authenticated do
+    plug Banking.Auth.Pipeline
+  end
+
+  # Unauthenticated routes
+
   scope "/api", BankingWeb do
     pipe_through :api
 
-    post "/accounts", AccountController, :create
-    get "/accounts", AccountController, :index
+    scope "/v1", V1, as: :v1 do
+      post "/signin", AuthController, :signin
+      post "/signup", AccountController, :create
+    end
+
+    scope "/v1", V1, as: :v1 do
+      pipe_through [:authenticated]
+
+      get "/accounts", AccountController, :index
+
+      post "/deposit", TransactionController, :deposit
+      post "/transfer", TransactionController, :transfer
+      post "/withdrawal", TransactionController, :withdrawal
+    end
   end
 end

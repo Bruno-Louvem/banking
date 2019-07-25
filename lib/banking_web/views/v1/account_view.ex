@@ -1,7 +1,7 @@
-defmodule BankingWeb.AccountView do
+defmodule BankingWeb.V1.AccountView do
   use BankingWeb, :view
 
-  alias BankingWeb.AccountView
+  alias BankingWeb.V1.AccountView
 
   def render("index.json", %{accounts: accounts}) do
     render_many(accounts, AccountView, "account.json")
@@ -12,8 +12,6 @@ defmodule BankingWeb.AccountView do
   end
 
   def render("account.json", %{account: account}) do
-    %{id: account.id,
-      name: account.name,
-      email: account.email}
+    %{id: account.id, name: account.name, email: account.user.email}
   end
 end

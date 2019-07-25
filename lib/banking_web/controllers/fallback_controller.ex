@@ -6,6 +6,13 @@ defmodule BankingWeb.FallbackController do
   """
   use BankingWeb, :controller
 
+  def call(conn, {:error, message, code}) do
+    conn
+    |> put_status(code)
+    |> put_view(BankingWeb.ErrorView)
+    |> render("#{code}.json", error: %{message: message})
+  end
+
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
     conn
     |> put_status(:unprocessable_entity)

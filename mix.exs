@@ -44,7 +44,13 @@ defmodule Banking.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:excoveralls, "~> 0.9.1"},
       {:faker, "~> 0.12", only: [:test, :dev]},
-      {:money, "~> 1.4"}
+      {:money, "~> 1.4"},
+      {:comeonin, "~> 4.1"},
+      {:bcrypt_elixir, "~> 1.0"},
+      {:guardian, "~> 1.0"},
+      {:timex, "~> 3.5"},
+      {:distillery, "~> 2.0", warn_missing: false},
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
 
