@@ -5,11 +5,15 @@ defmodule BankingWeb.ErrorViewTest do
   import Phoenix.View
 
   test "renders 404.json" do
-    assert render(BankingWeb.ErrorView, "404.json", []) == %{errors: %{detail: "Not Found"}}
+    assert render(BankingWeb.ErrorView, "404.json", error: "Not Found") == %{
+             errors: %{detail: "Not Found"}
+           }
+
+    assert render(BankingWeb.ErrorView, "404.json", []) == %{errors: %{detail: "Route not found"}}
   end
 
   test "renders 500.json" do
-    assert render(BankingWeb.ErrorView, "500.json", []) ==
+    assert render(BankingWeb.ErrorView, "500.json", error: "Internal Server Error") ==
              %{errors: %{detail: "Internal Server Error"}}
   end
 end

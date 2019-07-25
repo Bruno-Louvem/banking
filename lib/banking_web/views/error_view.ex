@@ -13,4 +13,24 @@ defmodule BankingWeb.ErrorView do
   def template_not_found(template, _assigns) do
     %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
   end
+
+  def render("442.json", %{error: error}) do
+    %{errors: %{detail: error}}
+  end
+
+  def render("404.json", %{error: error}) do
+    %{errors: %{detail: error}}
+  end
+
+  def render("403.json", %{error: error}) do
+    %{errors: %{detail: error}}
+  end
+
+  def render("404.json", _) do
+    %{errors: %{detail: "Route not found"}}
+  end
+
+  def render("500.json", %{error: error}) do
+    %{errors: %{detail: error}}
+  end
 end
