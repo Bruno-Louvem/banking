@@ -1,4 +1,7 @@
 defmodule Banking.Bank.Account do
+  @moduledoc """
+  Account entity, responsible for user's personal data
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,19 +9,17 @@ defmodule Banking.Bank.Account do
 
   schema "accounts" do
     has_one :balance, Banking.Bank.Balance
+    belongs_to :user, Banking.Auth.User, type: :binary_id
     field :name, :string
-    field :email, :string
 
     timestamps()
   end
 
-  @required_fields ~w(name email)a
+  @required_fields ~w(name user_id)a
 
-  @doc false
   def changeset(account, attrs) do
     account
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
-    |> unique_constraint(:email)
   end
 end

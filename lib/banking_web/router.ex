@@ -27,6 +27,9 @@ defmodule BankingWeb.Router do
       post "/deposit", TransactionController, :deposit
       post "/transfer", TransactionController, :transfer
       post "/withdrawal", TransactionController, :withdrawal
+
+      get "/balance/:account_id", TransactionController, :balance
+      get "/report", TransactionController, :report
     end
   end
 end

@@ -1,4 +1,7 @@
 defmodule Banking.Bank.Balance do
+  @moduledoc """
+  Balance entity, store last state of user balance
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

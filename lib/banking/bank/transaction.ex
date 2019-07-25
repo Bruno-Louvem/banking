@@ -1,4 +1,7 @@
 defmodule Banking.Bank.Transaction do
+  @moduledoc """
+  Store each transaction of accounts
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
