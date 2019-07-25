@@ -25,6 +25,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :banking, Banking.Auth.Guardian,
+  issuer: "banking",
+  secret_key: System.get_env("JWT_SECRET_KEY")
+
 config :money,
   default_currency: :BRL
 

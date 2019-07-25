@@ -10,8 +10,11 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :banking, BankingWeb.Endpoint,
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/cache_manifest.json"
+  url: [scheme: "https", host: "louvem-bank", port: 443],
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
+  server: true,
+  cache_static_manifest: "priv/static/cache_manifest.json",
+  render_errors: [accepts: ~w(json)]
 
 # Do not print debug messages in production
 config :logger, level: :info
