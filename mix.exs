@@ -49,7 +49,6 @@ defmodule Banking.MixProject do
       {:bcrypt_elixir, "~> 1.0"},
       {:guardian, "~> 1.0"},
       {:timex, "~> 3.5"},
-      {:distillery, "~> 2.0", warn_missing: false},
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false}
     ]
   end
